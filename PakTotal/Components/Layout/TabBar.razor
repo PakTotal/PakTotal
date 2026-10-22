@@ -1,0 +1,25 @@
+<nav class="tabs">
+    @foreach (var (path, label) in Tabs)
+    {
+        if (OnSelect.HasDelegate)
+        {
+            <button type="button" class="tab @(Active == path ? "active" : null)" aria-current="@(Active == path ? "page" : null)"
+                    @onclick="() => OnSelect.InvokeAsync(path)">@label</button>
+        }
+        else
+        {
+            <a href="@path" class="tab @(Active == path ? "active" : null)">@label</a>
+        }
+    }
+    <button type="button" class="theme-toggle" data-theme-toggle><span class="to-dark">Dark theme</span><span class="to-light">Light theme</span></button>
+</nav>
+
+@code {
+    public static readonly (string Path, string Label)[] Tabs = [("", "Scan a mod"), ("faq", "FAQ"), ("api", "API")];
+
+    [Parameter]
+    public string? Active { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelect { get; set; }
+}

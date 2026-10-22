@@ -1,0 +1,43 @@
+{
+    "id": "save-game-slot",
+    "name": "Save Game to Slot",
+    "codeName": "Badger",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {},
+    "settings": {
+        "targets": [
+            {
+                "owner": "GameplayStatics",
+                "function": "SaveGameToSlot",
+                "displayName": "Save Game to Slot",
+                "fileName": {
+                    "parameter": 1
+                },
+                "baseFolder": "Saved/SaveGames"
+            },
+            {
+                "owner": "AsyncActionHandleSaveGame",
+                "function": "AsyncSaveGameToSlot",
+                "displayName": "Async Save Game to Slot",
+                "fileName": {
+                    "parameter": 2
+                },
+                "baseFolder": "Saved/SaveGames"
+            }
+        ],
+        "policy": {
+            "unresolved": {
+                "level": "notice",
+                "severity": "none"
+            }
+        }
+    }
+}

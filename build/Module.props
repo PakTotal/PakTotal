@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ModuleRoot>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)\..'))</ModuleRoot>
+    <ModuleId>$([System.IO.Path]::GetFileName('$(ModuleRoot)'))</ModuleId>
+    <OutputPath>$(PakTotalModulesOutput)$(ModuleId)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(RepoRoot)PakTotal.Sdk\PakTotal.Sdk.csproj" Private="false" ExcludeAssets="runtime" />
+    <None Include="$(ModuleRoot)\module.json" Link="module.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

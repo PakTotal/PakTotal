@@ -1,0 +1,3 @@
+<Project>
+  <Import Project="$(RepoRoot)build\Module.targets" />
+</Project>

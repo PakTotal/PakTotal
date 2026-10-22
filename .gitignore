@@ -1,0 +1,13 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+.vs/
+*.DotSettings.user
+/artifacts/
+/native/
+/Modules.Private/
+
+.env

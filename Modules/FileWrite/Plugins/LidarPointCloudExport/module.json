@@ -1,0 +1,39 @@
+{
+    "id": "lidar-point-cloud-export",
+    "name": "Lidar Point Cloud Export",
+    "codeName": "Owl",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/LidarPointCloudRuntime"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "LidarPointCloud",
+                "function": "Export",
+                "displayName": "Export Point Cloud",
+                "path": {
+                    "parameter": 0
+                }
+            },
+            {
+                "owner": "LidarPointCloudBlueprintLibrary",
+                "function": "ExportPointCloudToFile",
+                "displayName": "Export Point Cloud to File",
+                "path": {
+                    "parameter": 1
+                }
+            }
+        ]
+    }
+}

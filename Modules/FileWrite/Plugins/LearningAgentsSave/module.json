@@ -1,0 +1,53 @@
+{
+    "id": "learning-agents-save",
+    "name": "Learning Agents save to file",
+    "codeName": "Raven",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/LearningAgents",
+            "/Script/LearningAgentsTraining"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "LearningAgentsRecording",
+                "function": "SaveRecordingToFile",
+                "displayName": "Save Recording to File",
+                "path": {
+                    "parameter": 0,
+                    "member": "FilePath"
+                }
+            },
+            {
+                "owner": "LearningAgentsNeuralNetwork",
+                "function": "SaveNetworkToSnapshot",
+                "displayName": "Save Network to Snapshot",
+                "path": {
+                    "parameter": 0,
+                    "member": "FilePath"
+                }
+            },
+            {
+                "owner": "LearningAgentsRecorder",
+                "function": "SaveSchemaConfig",
+                "displayName": "Save Schema Config",
+                "fileName": {
+                    "parameter": 0
+                },
+                "allowedExtensions": [
+                    ".json"
+                ]
+            }
+        ]
+    }
+}

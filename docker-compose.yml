@@ -1,0 +1,60 @@
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+services:
+  paktotal:
+    build: .
+    image: paktotal:local
+    expose:
+      - "8080"
+    environment:
+      DOTNET_gcServer: "0"
+      PakTotal__WorkerCount: "2"
+      PakTotal__MappingsCacheEntries: "2"
+      PakTotal__MaxDatabaseBytes: "10737418240"
+      PakTotal__MaxConcurrentBytes: "2147483648"
+      PakTotal__MaxQueueLength: "50"
+      PakTotal__TrustedNetworks__0: "10.89.0.0/24"
+    volumes:
+      - scans:/tmp/paktotal
+      - results:/app/data
+    networks:
+      - web
+    mem_limit: 3g
+    logging: *logging
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10.2
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      PAKTOTAL_DOMAIN: ${PAKTOTAL_DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+    depends_on:
+      - paktotal
+    mem_limit: 256m
+    logging: *logging
+    restart: unless-stopped
+
+networks:
+  web:
+    ipam:
+      config:
+        - subnet: 10.89.0.0/24
+
+volumes:
+  scans:
+  results:
+  caddy_data:
+  caddy_config:

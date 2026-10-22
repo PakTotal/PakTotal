@@ -1,0 +1,31 @@
+{
+    "id": "trace-to-file",
+    "name": "Start Trace to File",
+    "codeName": "Mole",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/TraceUtilities"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "TraceUtilLibrary",
+                "function": "StartTraceToFile",
+                "displayName": "Start Trace to File",
+                "path": {
+                    "parameter": 0
+                }
+            }
+        ]
+    }
+}

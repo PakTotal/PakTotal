@@ -1,0 +1,43 @@
+{
+    "id": "audio-recording-write",
+    "name": "Finish Recording Output file write",
+    "codeName": "Bat",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {},
+    "settings": {
+        "targets": [
+            {
+                "owner": "AudioMixerBlueprintLibrary",
+                "function": "StopRecordingOutput",
+                "displayName": "Finish Recording Output",
+                "fileName": {
+                    "parameter": 2
+                },
+                "directory": {
+                    "parameter": 3
+                },
+                "baseFolder": "Saved/BouncedWavFiles"
+            },
+            {
+                "owner": "SoundSubmix",
+                "function": "StopRecordingOutput",
+                "displayName": "Finish Recording Submix Output",
+                "fileName": {
+                    "parameter": 2
+                },
+                "directory": {
+                    "parameter": 3
+                },
+                "baseFolder": "Saved/BouncedWavFiles"
+            }
+        ]
+    }
+}

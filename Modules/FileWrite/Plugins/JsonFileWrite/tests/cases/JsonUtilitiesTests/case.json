@@ -1,0 +1,24 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../../../tests/shared/JsonUtilitiesTests/JsonUtilitiesTests.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "expected": {
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_NotJsonFileDirect": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_NotJsonFileIndirect1": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_NoExtension": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_DoubleExtension": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_DllTraversal": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_RuntimeNotJson": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_Branch": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_Variable": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_LocalFunction": "malicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_JsonDirect": "undetected",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_JsonUppercase": "undetected",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_MakeFilePathJson": "undetected",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_RuntimeJson": "suspicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_EmptyString": "undetected",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_Unresolved": "undetected",
+        "/Game/Mods/JsonUtilitiesTests/BP_SaveJsonToFile_UnresolvedTail": "suspicious:medium",
+        "/Game/Mods/JsonUtilitiesTests/BP_Safe_LoadJsonOnly": "undetected"
+    }
+}

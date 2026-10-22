@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>PakTotal.Modules.FileWrite</AssemblyName>
+        <RootNamespace>PakTotal.Modules.FileWrite</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="$(ModuleRoot)\module.json" />
+    </ItemGroup>
+
+</Project>

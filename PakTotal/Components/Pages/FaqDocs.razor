@@ -1,0 +1,70 @@
+<div class="box">
+    <h1 class="box-title">Frequently asked questions</h1>
+    <div class="box-body doc">
+        <h2>Do the number of modules reflect the number of vulnerabilities?</h2>
+        <p>
+            Some of the modules are checking different variations of the same vulnerabilities or end results, so the number of modules does not reflect the number of vulnerabilities.
+        </p>
+
+        <h2>My mod was flagged but I know it's legit, what do I do?</h2>
+        <p>
+            Results are automated and can include false positives and false negatives.
+            A Suspicious or Likely Malicious result describes what the code is able to do.
+            Please reach out to <code>admin@paktotal.dev</code> with the <b>scan hash</b> shown in your scan results.
+            If it is indeed safe, the scanners will be updated to resolve the false positive.
+        </p>
+
+        <h2>What if the game fixed a vulnerability that a mod is being flagged for?</h2>
+        <p>
+            Some games have fixed some of the publicly known vulnerabilities themselves (e.g. by making an engine change).
+            If a mod being scanned is flagged for one of these vulnerabilities (which would be known due to the verdict reason explaining why), contact the game developers to check if they have fixed the vulnerability and mark that module's result as one that can be disregarded.
+        </p>
+
+        <h2>What if a game adds its own functionality which contains vulnerabilities?</h2>
+        <p>
+            You should always try as hard as you can to responsibly disclose a vulnerability to the game's developers and wait for a patch.
+            If they do not act, please send an email about the vulnerability to <code>admin@paktotal.dev</code> and a new module can be written for it.
+        </p>
+
+        <h2>Does the site store uploaded files?</h2>
+        <p>
+            Immediately after a scan is completed the mod files are deleted from the server's storage to save on space.
+            The server caches a few of the latest mappings files to speed up any consecutive scan requests.
+        </p>
+
+        <h2>Why are the modules using codenames?</h2>
+        <p>
+            Modules can be:
+            <ul>
+                <li>Public - they check for publicly known vulnerabilities. If any public modules flag a mod, the reason for the verdict is given.</li>
+                <li>Private - they check for privately known vulnerabilities. These issues have been reported to Epic Games, but as of Q4 2026 they have not been fixed, so their details are kept private to avoid helping attackers. If a private module flags a mod, the reason for the verdict is not provided.</li>
+            </ul>
+            Security through obscurity is never an ideal situation, but the blast radius for these vulnerabilities is millions of users, and it currently seems unlikely they will be patched in the vanilla engine. Therefore, such steps are necessary.
+            Codenames are used to hide the purpose of modules including public ones, until a public module returns a reason for the verdict provided.
+        </p>
+
+        <h2>What does "Unable to process file" mean?</h2>
+        <p>
+            The scanner could not read part of the mod, or a module failed or ran out of time while checking it.
+            A wrong engine version, mappings file or AES key is likely.
+            Any module that did find something still reports it, and the worst detection is still shown as the overall result.
+        </p>
+
+        <h2>Why does it say "Some content could not be fully analysed"?</h2>
+        <p>
+            Either the scanner could not read part of the mod, or a module could only partly check something it found, for example a value it could not work out from the blueprint code.
+            Those modules are marked "(partial)" in the results.
+        </p>
+
+        <h2>Is this site open source?</h2>
+        <p>
+            Yes, the site is <a href="https://github.com/PakTotal/PakTotal" rel="noopener">open source here</a>, though note that private modules will not be made open source unless the vulnerabilities they scan for are made public.
+        </p>
+
+        <h2>I have a vulnerability to report, who do I contact?</h2>
+        <p>
+            Please first attempt to responsibly disclose the vulnerability to relevant parties (e.g. Epic Games security).
+            To submit a vulnerability to this site, please email your writeup to <code>admin@paktotal.dev</code>
+        </p>
+    </div>
+</div>

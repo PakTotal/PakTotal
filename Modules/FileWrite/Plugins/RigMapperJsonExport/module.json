@@ -1,0 +1,35 @@
+{
+    "id": "rig-mapper-json-export",
+    "name": "Rig Mapper Export as Json File",
+    "codeName": "Koala",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/RigMapper"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "RigMapperDefinition",
+                "function": "ExportAsJsonFile",
+                "displayName": "Export as Json File",
+                "path": {
+                    "parameter": 0,
+                    "member": "FilePath"
+                },
+                "allowedExtensions": [
+                    ".json"
+                ]
+            }
+        ]
+    }
+}

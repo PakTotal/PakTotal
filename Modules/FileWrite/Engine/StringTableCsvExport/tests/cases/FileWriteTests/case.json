@@ -1,0 +1,15 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../../../tests/shared/FileWriteTests/FileWriteTests.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "moduleVerdict": "malicious",
+    "expected": {
+        "/Game/Mods/FileWriteTests/BP_Write_StringTableBadExtension": "malicious:medium",
+        "/Game/Mods/FileWriteTests/BP_Write_StringTableCsv": "undetected",
+        "/Game/Mods/FileWriteTests/BP_FW_StringChop": "undetected",
+        "/Game/Mods/FileWriteTests/BP_FW_ArrayJoin": "malicious:medium",
+        "/Game/Mods/FileWriteTests/BP_FW_ConvertChain": "undetected",
+        "/Game/Mods/FileWriteTests/BP_FW_LoopReverse": "undetected",
+        "/Game/Mods/FileWriteTests/BP_FW_FuncChain": "malicious:medium"
+    }
+}

@@ -1,0 +1,86 @@
+﻿@using System.Globalization
+@using PakTotal.Core.Results
+@inherits LayoutComponentBase
+@inject SiteCounters Counters
+
+<div class="wrap">
+    <header class="masthead">
+        <div class="brand">
+            <button type="button" class="mascot" data-mascot aria-label="Pakker the crate. Click for a mod safety tip" title="Pakker says hi!">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" shape-rendering="crispEdges">
+                    <rect x="1" y="5" width="10" height="10" fill="#6b3e16"/>
+                    <rect x="2" y="6" width="8" height="8" fill="#c4873f"/>
+                    <rect x="2" y="9" width="8" height="1" fill="#8a5424"/>
+                    <rect x="5" y="6" width="2" height="8" fill="#a86c2e"/>
+                    <rect x="3" y="7" width="1" height="1" fill="#1b1b1b"/>
+                    <rect x="8" y="7" width="1" height="1" fill="#1b1b1b"/>
+                    <rect x="4" y="11" width="4" height="1" fill="#1b1b1b"/>
+                    <rect x="10" y="1" width="4" height="1" fill="#2b2b2b"/>
+                    <rect x="9" y="2" width="1" height="4" fill="#2b2b2b"/>
+                    <rect x="14" y="2" width="1" height="4" fill="#2b2b2b"/>
+                    <rect x="10" y="6" width="4" height="1" fill="#2b2b2b"/>
+                    <rect x="10" y="2" width="4" height="4" fill="#bfe3ff"/>
+                    <rect x="10" y="2" width="2" height="1" fill="#ffffff"/>
+                    <rect x="13" y="7" width="1" height="1" fill="#2b2b2b"/>
+                    <rect x="14" y="8" width="1" height="1" fill="#2b2b2b"/>
+                    <rect x="15" y="9" width="1" height="1" fill="#2b2b2b"/>
+                </svg>
+            </button>
+            <a class="logo" href="">Pak<span>Total</span></a>
+            <p class="speech" data-mascot-speech role="status" hidden></p>
+        </div>
+        @if (_visits is { } visits)
+        {
+            <div class="hit-counter">
+                <span>This page has been loaded</span>
+                <span class="odometer" role="img" aria-label="@visits.ToString(CultureInfo.InvariantCulture)">
+                    @foreach (var digit in visits.ToString("D6", CultureInfo.InvariantCulture))
+                    {
+                        <span>@digit</span>
+                    }
+                </span>
+                <span>times since launch</span>
+            </div>
+        }
+    </header>
+
+    <main class="content">
+        @Body
+    </main>
+
+    <footer class="footer">
+        <div class="buttons">
+            <span class="b88 b88-scan" role="img" aria-label="Scan before you install"><b>SCAN</b><i>before you install</i></span>
+            <span class="b88 b88-cookie" role="img" aria-label="NO tracking cookies"><b>NO</b><i>tracking cookies</i></span>
+            <a class="b88 b88-cue" href="https://github.com/FabianFG/CUE4Parse" rel="noopener" aria-label="Powered by CUE4Parse"><i>powered by</i><b>CUE4Parse</b></a>
+            <a class="b88 b88-blazor" href="https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor" rel="noopener" aria-label="Made with Blazor"><i>made with</i><b>Blazor</b></a>
+            <span class="b88 b88-any" role="img" aria-label="Works in any browser"><i>works in</i><b>any browser</b></span>
+        </div>
+        <p>
+            &copy; @DateTime.UtcNow.Year PakTotal &middot; <a href="https://github.com/PakTotal/PakTotal" rel="noopener">Source code</a>
+            &middot; Last updated @LastUpdated
+        </p>
+    </footer>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    Something went wrong.
+    <a href="." class="reload">Reload</a>
+</div>
+
+@code {
+    private static readonly string LastUpdated =
+        File.GetLastWriteTimeUtc(typeof(MainLayout).Assembly.Location).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    private long? _visits;
+
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var path = HttpContext?.Request.Path.Value?.Trim('/').ToLowerInvariant();
+        var isPageView = HttpContext?.Response.StatusCode == StatusCodes.Status200OK && TabBar.Tabs.Any(t => t.Path == path);
+        _visits = isPageView ? await Counters.IncrementAsync(SiteCounters.Visits) : await Counters.GetAsync(SiteCounters.Visits);
+    }
+}

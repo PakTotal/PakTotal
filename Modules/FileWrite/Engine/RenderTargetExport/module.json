@@ -1,0 +1,51 @@
+{
+    "id": "render-target-export",
+    "name": "Export Render Target",
+    "codeName": "Otter",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {},
+    "settings": {
+        "targets": [
+            {
+                "owner": "KismetRenderingLibrary",
+                "function": "ExportRenderTarget",
+                "displayName": "Export Render Target",
+                "directory": {
+                    "parameter": 2
+                },
+                "fileName": {
+                    "parameter": 3
+                },
+                "allowedExtensions": [
+                    ".png",
+                    ".hdr",
+                    ".exr"
+                ]
+            },
+            {
+                "owner": "KismetRenderingLibrary",
+                "function": "ExportTexture2D",
+                "displayName": "Export Texture2D",
+                "directory": {
+                    "parameter": 2
+                },
+                "fileName": {
+                    "parameter": 3
+                },
+                "allowedExtensions": [
+                    ".png",
+                    ".hdr",
+                    ".exr"
+                ]
+            }
+        ]
+    }
+}

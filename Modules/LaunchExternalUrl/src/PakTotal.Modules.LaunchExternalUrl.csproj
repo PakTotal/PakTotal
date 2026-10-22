@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>PakTotal.Modules.LaunchExternalUrl</AssemblyName>
+        <RootNamespace>PakTotal.Modules.LaunchExternalUrl</RootNamespace>
+    </PropertyGroup>
+
+</Project>

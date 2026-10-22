@@ -1,0 +1,26 @@
+{
+    "id": "interchange-use",
+    "name": "Interchange plugin use",
+    "codeName": "Dog",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.InterchangeUse.dll",
+    "entryType": "PakTotal.Modules.InterchangeUse.ScriptPackageUseModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/InterchangeCore"
+        ]
+    },
+    "settings": {
+        "packages": [
+            "/Script/Interchange"
+        ],
+        "severity": "medium",
+        "reason": "Uses the Interchange plugin, which no normal mod has a reason to use and can write files to disk."
+    }
+}

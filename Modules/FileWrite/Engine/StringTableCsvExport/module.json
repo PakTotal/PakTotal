@@ -1,0 +1,30 @@
+{
+    "id": "string-table-csv-export",
+    "name": "Export String Table to CSV File",
+    "codeName": "Lynx",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {},
+    "settings": {
+        "targets": [
+            {
+                "owner": "KismetStringTableLibrary",
+                "function": "ExportTableToCSVFile",
+                "displayName": "Export String Table to CSV File",
+                "path": {
+                    "parameter": 1
+                },
+                "allowedExtensions": [
+                    ".csv"
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <LangVersion>latest</LangVersion>
+    <CUE4ParseProjectPath>$(MSBuildThisFileDirectory)ThirdParty\CUE4Parse\CUE4Parse\CUE4Parse.csproj</CUE4ParseProjectPath>
+    <PakTotalModulesOutput>$(MSBuildThisFileDirectory)artifacts\modules\</PakTotalModulesOutput>
+    <UEBPGVInternalsVisibleTo>PakTotal.Sdk</UEBPGVInternalsVisibleTo>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+**/*.user
+**/*.DotSettings.user
+.git/
+artifacts/
+native/
+ThirdParty/CUE4Parse/.git
+ThirdParty/CUE4Parse/CUE4Parse-Natives/builddir/
+Modules/*/tests/
+Modules.Private/*/tests/
+.env

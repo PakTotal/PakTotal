@@ -1,0 +1,450 @@
+@page "/"
+@page "/api"
+@page "/faq"
+@using Microsoft.Extensions.Options
+@using System.Globalization
+@using PakTotal.Core
+@using PakTotal.Core.Modules
+@using PakTotal.Core.Results
+@using PakTotal.Core.Scanning
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+@inject IOptions<PakTotalOptions> Options
+@inject NavigationManager Navigation
+@inject ModuleCatalog Catalog
+@inject ScanQueue Queue
+@inject SiteCounters Counters
+
+<PageTitle>@(_tab switch { "api" => "API - PakTotal", "faq" => "FAQ - PakTotal", _ => "PakTotal" })</PageTitle>
+
+<TabBar Active="@_tab" OnSelect="SelectTabAsync"/>
+
+<div class="ticker" role="marquee" aria-label="News">
+    <div class="ticker-track">
+        @for (var copy = 0; copy < 2; copy++)
+        {
+            <span class="ticker-items" aria-hidden="@(copy == 1 ? "true" : null)">
+                @foreach (var item in TickerItems())
+                {
+                    <span class="ticker-star" aria-hidden="true">&#9733;</span>
+                    <span>@item</span>
+                }
+            </span>
+        }
+    </div>
+</div>
+
+@if (_tab == "api")
+{
+    <ApiDocs/>
+}
+else if (_tab == "faq")
+{
+    <FaqDocs/>
+}
+
+<!-- <div class="construction"><b>Under construction!</b></div> -->
+<div class="tab-panel" hidden="@(_tab != "")">
+    <div class="box">
+        <h1 class="box-title">Upload and scan a mod</h1>
+        <div class="box-body">
+            <p>Scans Unreal Engine mod files for known vulnerabilities.</p>
+            <table class="form">
+                <tbody>
+                <tr>
+                    <td class="label"><label for="archive">Mod archive:</label></td>
+                    <td>
+                        <input id="archive" type="file" multiple accept=".pak,.utoc,.ucas,.zip" @ref="_archiveInput" @onchange="OnArchiveChangedAsync"/>
+                        <span class="hint">.pak, .utoc + .ucas + .pak for IoStore, or a .zip containing them</span>
+                    </td>
+                </tr>
+                @if (_needsGlobal)
+                {
+                    <tr>
+                        <td class="label"><label for="global">Game global files:</label></td>
+                        <td>
+                            <input id="global" type="file" multiple accept=".utoc,.ucas" @ref="_globalInput"/>
+                            <span class="hint">global.utoc + global.ucas from the game's Paks folder</span>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <td class="label"><label for="engine">Engine version:</label></td>
+                    <td>
+                        <select id="engine" @bind="_engineVersion">
+                            <option value="">Select a version</option>
+                            @if (_versions is not null)
+                            {
+                                <optgroup label="Engine versions">
+                                    @foreach (var engine in _versions.Engines)
+                                    {
+                                        <option value="@engine.Name">@engine.Display</option>
+                                    }
+                                </optgroup>
+                                <optgroup label="Game specific versions">
+                                    @foreach (var game in _versions.Games)
+                                    {
+                                        <option value="@game.Name">@game.Display</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><label for="mappings">Mappings (optional):</label></td>
+                    <td>
+                        <input id="mappings" type="file" accept=".usmap,.jmap,.gz" @ref="_mappingsInput"/>
+                        <span class="hint">.jmap, .jmap.gz or .usmap</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label"><label for="aes">AES key (optional):</label></td>
+                    <td><input id="aes" type="text" placeholder="0x..." autocomplete="off" spellcheck="false" @bind="_aesKey"/></td>
+                </tr>
+                <tr>
+                    <td class="label"></td>
+                    <td>
+                        <button class="button" @onclick="SubmitAsync" disabled="@_busy">Scan it!</button>
+                        <span class="hint inline">Max. @(Options.Value.MaxUploadBytes / (1024 * 1024)) MB for all files combined</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @if (_error is not null)
+    {
+        <p class="error">@_error</p>
+    }
+
+    @if (_result is { Verdict: { } verdict })
+    {
+        var modules = Sorted(_result.Modules ?? []);
+        <div class="box">
+            <h2 class="box-title">Scan results</h2>
+            <div class="box-body">
+                <table class="summary">
+                    <tbody>
+                    @if (_scannedNames.Length > 0)
+                    {
+                        <tr>
+                            <th scope="row">@(_scannedNames.Length == 1 ? "File name:" : "File names:")</th>
+                            <td class="file-names">
+                                @foreach (var name in _scannedNames)
+                                {
+                                    <div>@name</div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (_result.Hash is { } scanHash)
+                    {
+                        <tr><th scope="row">Scan hash:</th><td class="file-hashes"><span class="hash">@scanHash</span></td></tr>
+                    }
+                    @if (_result.Files is { Count: > 0 } files)
+                    {
+                        <tr>
+                            <th scope="row">File SHA-256:</th>
+                            <td class="file-hashes">
+                                @foreach (var file in files)
+                                {
+                                    <div><span class="hash">@file.Sha256</span> <span class="hint inline">@file.Name</span></div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    <tr><th scope="row">Result:</th><td><span class="verdict @verdict">@Title(verdict)</span></td></tr>
+                    <tr><th scope="row">Severity:</th><td>@(_result.Severity is { } overallSeverity ? Capitalise(overallSeverity) : "–")</td></tr>
+                    @if (_scannedEngine is not null)
+                    {
+                        <tr><th scope="row">Engine version:</th><td>@_scannedEngine</td></tr>
+                    }
+                    @if (_result.ScannedAt is { } scannedAt)
+                    {
+                        <tr>
+                            <th scope="row">Analysed:</th>
+                            <td>
+                                @scannedAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)
+                                @if (_result.Cached)
+                                {
+                                    <span class="hint inline">(earlier result for the same files)</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+                @if (_result.Incomplete == true)
+                {
+                    <div class="warn"><b>Note:</b> Some content could not be fully analysed.</div>
+                }
+            </div>
+        </div>
+
+        <table class="results">
+            <thead>
+            <tr>
+                <th scope="col">Module</th>
+                <th scope="col">Result</th>
+                <th scope="col">Severity</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (var i = 0; i < modules.Count; i++)
+            {
+                var module = modules[i];
+                var expandable = module.Assets.Count > 0;
+                var expanded = expandable && _expanded.Contains(module.Name);
+                <tr class="@(i % 2 == 1 ? "alt" : "")">
+                    <th scope="row">
+                        @if (expandable)
+                        {
+                            <button class="module-name" aria-expanded="@(expanded ? "true" : "false")" @onclick="() => Toggle(module.Name)">
+                                <span class="marker" aria-hidden="true">@(expanded ? "−" : "+")</span>@module.Name
+                            </button>
+                        }
+                        else
+                        {
+                            <span class="module-name"><span class="marker blank" aria-hidden="true"></span>@module.Name</span>
+                        }
+                    </th>
+                    <td>
+                        <span class="verdict @module.Verdict">@Title(module.Verdict)</span>
+                        @if (module.Incomplete)
+                        {
+                            <span class="partial">(partial)</span>
+                        }
+                    </td>
+                    <td>@(module.Severity is { } severity ? Capitalise(severity) : "–")</td>
+                </tr>
+                @if (expanded)
+                {
+                    <tr class="details-row">
+                        <td colspan="3">
+                            <table class="assets">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Asset</th>
+                                    <th scope="col">Result</th>
+                                    <th scope="col">Severity</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var asset in module.Assets)
+                                {
+                                    <tr>
+                                        <td class="path">@asset.Path</td>
+                                        <td><span class="verdict @asset.Verdict">@Title(asset.Verdict)</span></td>
+                                        <td>@(asset.Severity is { } assetSeverity ? Capitalise(assetSeverity) : "–")</td>
+                                    </tr>
+                                    @foreach (var reason in asset.Reasons)
+                                    {
+                                        <tr class="reason">
+                                            <td class="path" colspan="2">@reason.Text</td>
+                                            <td>@(reason.Severity != "none" ? Capitalise(reason.Severity) : "")</td>
+                                        </tr>
+                                    }
+                                }
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    }
+
+    <p class="disclaimer">
+        This website should <b>not</b> be used as an alternative to VirusTotal or other standard malware scanning engines.
+        A result of "Undetected" does <b>not</b> mean the mod is safe; there may exist more unknown threats.
+        Not affiliated with Epic Games or any of its partners. Unreal Engine is a trademark of Epic Games, Inc.
+        Provided as-is, without warranty of any kind. You use the results at your own risk.
+    </p>
+</div>
+
+@if (_busy)
+{
+    <div class="overlay">
+        <div class="overlay-box" role="status">
+            <div class="box-title">Please wait...</div>
+            <div class="box-body">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <p>@_progress</p>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private ElementReference _archiveInput;
+    private ElementReference _globalInput;
+    private ElementReference _mappingsInput;
+    private EngineVersionsResponse? _versions;
+    private string? _aesKey;
+    private string _engineVersion = "";
+    private bool _needsGlobal;
+    private string[] _archiveNames = [];
+    private string[] _scannedNames = [];
+    private string? _scannedEngine;
+    private bool _busy;
+    private string _progress = "";
+    private string? _error;
+    private ScanStatusResponse? _result;
+    private readonly HashSet<string> _expanded = [];
+
+    private string _tab = "";
+
+    private long? _scans;
+    private int _running;
+    private int _pending;
+
+    private List<string> ModuleNames => Catalog.Modules.Select(m => ModuleCodeNames.For(m.Manifest)).Order(StringComparer.OrdinalIgnoreCase).ToList();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].Trim('/').ToLowerInvariant();
+        _tab = TabBar.Tabs.Any(t => t.Path == path) ? path : "";
+        await LoadStatsAsync();
+    }
+
+    private async Task LoadStatsAsync()
+    {
+        _scans = await Counters.GetAsync(SiteCounters.Scans);
+        _running = Queue.Running;
+        _pending = Queue.Pending;
+    }
+
+    private IEnumerable<string> TickerItems()
+    {
+        yield return "Welcome to PakTotal!";
+        if (_scans is { } scans and > 0) yield return $"{scans.ToString("N0", CultureInfo.InvariantCulture)} {(scans == 1 ? "mod" : "mods")} scanned so far";
+        var names = ModuleNames;
+        yield return $"{names.Count} modules on duty today: {string.Join(", ", names)}";
+        yield return _running + _pending == 0
+            ? "The scanner is idle, so your scan starts straight away"
+            : $"{_running} scanning and {_pending} waiting in the queue";
+        yield return "Uploading files that were scanned before gets you the earlier result instantly";
+        yield return "Remember: Undetected does not mean safe";
+        yield return "Click Pakker the crate for a tip";
+    }
+
+    private async Task SelectTabAsync(string tab)
+    {
+        _tab = tab;
+        await JS.InvokeVoidAsync("pakTotal.replacePath", tab);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        var response = await JS.InvokeAsync<ApiResult<EngineVersionsResponse>>("pakTotal.getEngineVersions");
+        if (response is { Ok: true, Body: { } versions }) _versions = versions;
+        else _error = "Could not load the engine version list.";
+        StateHasChanged();
+    }
+
+    private async Task OnArchiveChangedAsync(ChangeEventArgs _)
+    {
+        _archiveNames = await JS.InvokeAsync<string[]>("pakTotal.selectedNames", _archiveInput);
+        var names = await JS.InvokeAsync<string[]>("pakTotal.fileNames", _archiveInput);
+        _needsGlobal = names.Any(n => n.EndsWith(".utoc", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private void Toggle(string module)
+    {
+        if (!_expanded.Remove(module)) _expanded.Add(module);
+    }
+
+    private async Task SubmitAsync()
+    {
+        _error = null;
+        _result = null;
+        _expanded.Clear();
+        if (string.IsNullOrEmpty(_engineVersion))
+        {
+            _error = "Select an engine version.";
+            return;
+        }
+
+        _busy = true;
+        _scannedNames = _archiveNames;
+        _scannedEngine = _versions?.Engines.Concat(_versions.Games).FirstOrDefault(v => v.Name == _engineVersion)?.Display ?? _engineVersion;
+        _progress = "Uploading...";
+        StateHasChanged();
+        try
+        {
+            object? global = _needsGlobal ? _globalInput : null;
+            var submitted = await JS.InvokeAsync<ApiResult<ScanSubmittedResponse>>("pakTotal.submitScan", TimeSpan.FromMinutes(30),
+                _archiveInput, global, _mappingsInput, _aesKey ?? "", _engineVersion);
+            if (!submitted.Ok || submitted.Body is null)
+            {
+                _error = submitted.Error ?? $"Upload failed ({submitted.Status}).";
+                return;
+            }
+            await PollAsync(submitted.Body.Id);
+        }
+        catch (JSException)
+        {
+            _error = "Upload failed.";
+        }
+        finally
+        {
+            _busy = false;
+            await LoadStatsAsync();
+        }
+    }
+
+    private async Task PollAsync(string id)
+    {
+        while (true)
+        {
+            var response = await JS.InvokeAsync<ApiResult<ScanStatusResponse>>("pakTotal.getScan", id);
+            if (!response.Ok || response.Body is not { } status)
+            {
+                _error = response.Error ?? "Lost track of the scan.";
+                return;
+            }
+
+            switch (status.Status)
+            {
+                case "done":
+                    _result = status;
+                    return;
+                case "failed":
+                    _error = status.Error ?? "The scan failed.";
+                    return;
+                case "queued":
+                    _progress = status.Position > 0 ? $"Queued, position {status.Position}..." : "Queued...";
+                    break;
+                default:
+                    _progress = "Scanning...";
+                    break;
+            }
+            StateHasChanged();
+            await Task.Delay(1500);
+        }
+    }
+
+    private static string Title(string verdict) => verdict switch
+    {
+        "undetected" => "Undetected",
+        "suspicious" => "Suspicious",
+        "malicious" => "Likely malicious",
+        "unprocessable" => "Unable to process file",
+        _ => verdict
+    };
+
+    private static readonly string[] VerdictOrder = ["malicious", "suspicious", "unprocessable", "undetected"];
+
+    private static List<ModuleResultResponse> Sorted(IEnumerable<ModuleResultResponse> modules) =>
+        modules.OrderBy(m => Array.IndexOf(VerdictOrder, m.Verdict) is var i and >= 0 ? i : VerdictOrder.Length)
+            .ThenBy(m => m.Name, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+    private static string Capitalise(string value) => value.Length == 0 ? value : char.ToUpperInvariant(value[0]) + value[1..];
+
+    private sealed record ApiResult<T>(int Status, bool Ok, T? Body, string? Error);
+}

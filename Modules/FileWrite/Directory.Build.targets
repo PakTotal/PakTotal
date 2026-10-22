@@ -1,0 +1,15 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.targets', '$(MSBuildThisFileDirectory)..\'))" />
+
+  <Target Name="DeployFileWriteModules" AfterTargets="Build">
+    <ItemGroup>
+      <FileWriteManifest Include="$(MSBuildThisFileDirectory)Engine\*\module.json;$(MSBuildThisFileDirectory)Plugins\*\module.json" />
+      <FileWriteManifest>
+        <ModuleId>$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName('%(FullPath)'))))</ModuleId>
+      </FileWriteManifest>
+      <FileWriteOutput Include="$(OutDir)$(TargetName).dll;$(OutDir)$(TargetName).pdb;$(OutDir)$(TargetName).deps.json" />
+    </ItemGroup>
+    <Copy SourceFiles="%(FileWriteManifest.FullPath)" DestinationFolder="$(PakTotalModulesOutput)%(FileWriteManifest.ModuleId)" SkipUnchangedFiles="true" />
+    <Copy SourceFiles="@(FileWriteOutput)" DestinationFolder="$(PakTotalModulesOutput)%(FileWriteManifest.ModuleId)" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <AssemblyName>PakTotal.Modules.LaunchUrl</AssemblyName>
+        <RootNamespace>PakTotal.Modules.LaunchUrl</RootNamespace>
+    </PropertyGroup>
+
+</Project>

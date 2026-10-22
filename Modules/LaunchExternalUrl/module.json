@@ -1,0 +1,20 @@
+{
+    "id": "launch-external-url",
+    "name": "LaunchExternalUrl call",
+    "codeName": "Bear",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.LaunchExternalUrl.dll",
+    "entryType": "PakTotal.Modules.LaunchExternalUrl.LaunchExternalUrlModule",
+    "requires": [ "blueprints" ],
+    "appliesTo": {},
+    "settings": {
+        "owner": "KismetSystemLibrary",
+        "function": "LaunchExternalUrl",
+        "domainsParameter": 0,
+        "urlParameter": 1,
+        "allowedScheme": "http"
+    }
+}

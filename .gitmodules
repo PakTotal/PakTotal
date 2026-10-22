@@ -1,0 +1,7 @@
+[submodule "ThirdParty/CUE4Parse"]
+	path = ThirdParty/CUE4Parse
+	url = https://github.com/FabianFG/CUE4Parse.git
+[submodule "ThirdParty/UEBlueprintGraphViewer"]
+	path = ThirdParty/UEBlueprintGraphViewer
+	url = https://github.com/PakTotal/UEBlueprintGraphViewer.git
+	branch = paktotal

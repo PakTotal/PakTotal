@@ -1,0 +1,19 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../tests/shared/PakTotalTesting5_8/PakTotalTesting5_8.pak" ],
+    "mappings": "../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "expected": {
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_HttpAllowed": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_HttpSubdomain": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_AnyDomain": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_WebIndirect": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_Branch": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_FileDirect": "suspicious:low",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_FileIndirect": "suspicious:low",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_RuntimePath": "suspicious:low",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_Unresolved": "suspicious:unknown",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_EmptyString": "undetected",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_HttpBlocked": "undetected",
+        "/Game/Mods/PakTotalTesting5_8/LaunchExternalURL/BP_LaunchExternalURL_HttpsBlocked": "undetected"
+    }
+}

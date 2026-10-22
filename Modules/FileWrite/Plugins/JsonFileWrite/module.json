@@ -1,0 +1,38 @@
+{
+    "id": "json-file-write",
+    "name": "Save Json to File",
+    "codeName": "Panda",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/JsonBlueprintUtilities"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "JsonBlueprintFunctionLibrary",
+                "function": "ToFile",
+                "displayName": "Save Json to File",
+                "path": {
+                    "parameter": 1,
+                    "member": "FilePath"
+                },
+                "allowedExtensions": [
+                    ".json"
+                ]
+            }
+        ],
+        "policy": {
+            "unresolved": { "level": "notice", "severity": "none" }
+        }
+    }
+}

@@ -1,0 +1,4 @@
+{$PAKTOTAL_DOMAIN:localhost} {
+	encode zstd gzip
+	reverse_proxy paktotal:8080
+}

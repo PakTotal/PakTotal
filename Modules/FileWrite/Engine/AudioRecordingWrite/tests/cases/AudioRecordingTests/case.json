@@ -1,0 +1,18 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../../../tests/shared/AudioRecordingTests/AudioRecordingTests.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "moduleVerdict": "malicious",
+    "expected": {
+        "/Game/Mods/AudioRecordingTests/BP_Record_Null": "malicious:high",
+        "/Game/Mods/AudioRecordingTests/BP_Record_PathTraversal": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_NameTraversal": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_RootedPath": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_UserDir": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_Variable": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_Submix": "suspicious:medium",
+        "/Game/Mods/AudioRecordingTests/BP_Record_Plain": "undetected",
+        "/Game/Mods/AudioRecordingTests/BP_Record_SavedDir": "undetected",
+        "/Game/Mods/AudioRecordingTests/BP_Record_Unresolved": "suspicious:medium"
+    }
+}

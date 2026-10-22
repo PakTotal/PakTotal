@@ -1,0 +1,8 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "WhiskerPOV.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "expected": {
+        "/Game/Mods/ModActor/ModActor": "undetected"
+    }
+}

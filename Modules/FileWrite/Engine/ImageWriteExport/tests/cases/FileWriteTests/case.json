@@ -1,0 +1,10 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../../../tests/shared/FileWriteTests/FileWriteTests.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "moduleVerdict": "suspicious",
+    "expected": {
+        "/Game/Mods/FileWriteTests/BP_Write_ExportToDiskRooted": "suspicious:medium",
+        "/Game/Mods/FileWriteTests/BP_Write_ExportToDiskSaved": "undetected"
+    }
+}

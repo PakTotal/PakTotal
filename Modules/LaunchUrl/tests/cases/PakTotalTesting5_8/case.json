@@ -1,0 +1,29 @@
+{
+    "engineVersion": "GAME_UE5_8",
+    "archives": [ "../../../../../tests/shared/PakTotalTesting5_8/PakTotalTesting5_8.pak" ],
+    "mappings": "../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "expected": {
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_FileDirect": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_FileIndirect1": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_FileIndirect2": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_FileIndirect3": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_File_ExtRefAB": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_File_ExtRefBB": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/WBP_LaunchURL_FileDirect": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/WBP_LaunchURL_FileIndirect1": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_LocalFunction": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_Branch": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_RuntimePath": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_Loop": "malicious:high",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_EmptyString": "suspicious:low",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_WebDirect": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/WBP_LaunchURL_WebDirect": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_WebIndirect": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_TimerByName": "suspicious:medium",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_Unresolved": "suspicious:unknown",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_FileDirect_Unconnected": "undetected",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_File_ExtRefAA": "undetected",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_LaunchURL_File_ExtRefBA": "undetected",
+        "/Game/Mods/PakTotalTesting5_8/LaunchURL/BP_Safe_PrintString": "undetected"
+    }
+}

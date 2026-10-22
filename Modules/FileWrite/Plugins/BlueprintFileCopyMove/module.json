@@ -1,0 +1,39 @@
+{
+    "id": "blueprint-file-copy-move",
+    "name": "Blueprint File Utils Copy/Move",
+    "codeName": "Ferret",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/BlueprintFileUtils"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "BlueprintFileUtilsBPLibrary",
+                "function": "CopyFile",
+                "displayName": "Copy File",
+                "path": {
+                    "parameter": 0
+                }
+            },
+            {
+                "owner": "BlueprintFileUtilsBPLibrary",
+                "function": "MoveFile",
+                "displayName": "Move File",
+                "path": {
+                    "parameter": 0
+                }
+            }
+        ]
+    }
+}

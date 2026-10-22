@@ -1,0 +1,7 @@
+{
+    "engineVersion": "GAME_UE5_2",
+    "archives": [ "../../../../../../../tests/shared/JsonUtilitiesTests/JsonUtilitiesTests.pak" ],
+    "mappings": "../../../../../../../tests/shared/Whiskerwood-0.7.209.0/Whiskerwood-0.7.209.0.jmap.gz",
+    "moduleVerdict": "unprocessable",
+    "expected": {}
+}

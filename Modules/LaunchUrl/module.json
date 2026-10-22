@@ -1,0 +1,19 @@
+{
+    "id": "launch-url",
+    "name": "LaunchURL call",
+    "codeName": "Seal",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.LaunchUrl.dll",
+    "entryType": "PakTotal.Modules.LaunchUrl.LaunchUrlModule",
+    "requires": [ "blueprints" ],
+    "appliesTo": {},
+    "settings": {
+        "targets": [
+            { "owner": "KismetSystemLibrary", "function": "LaunchURL", "urlParameter": 0 }
+        ],
+        "nameReferences": [ "LaunchURL" ]
+    }
+}

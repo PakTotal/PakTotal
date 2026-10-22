@@ -1,0 +1,214 @@
+@using Microsoft.Extensions.Options
+@using PakTotal.Core
+@inject IOptions<PakTotalOptions> Options
+
+<div class="box">
+    <h1 class="box-title">PakTotal API</h1>
+    <div class="box-body doc">
+        <p>
+            The scan page on this site uses the same public REST API described here. All endpoints live under <code>/api/v1</code>, return JSON
+            and include an <code>X-Api-Version</code> header (currently <code>@ApiInfo.Version</code>). No API key is needed.
+        </p>
+        <p>Errors are returned as <code>{ "error": "message" }</code> with a matching HTTP status code.</p>
+
+        <h2>Limits</h2>
+        <table class="doc-table">
+            <tbody>
+            <tr><th scope="row">Upload size</th><td>
+                @(Limits.MaxUploadBytes / (1024 * 1024)) MB per scan request, combined across every file sent (archives, global files and
+                mappings). A <code>.zip</code> must also unpack to no more than this
+            </td></tr>
+            <tr><th scope="row">Scan submissions</th><td>@Limits.SubmitPermitsPerMinute per minute per IP address</td></tr>
+            <tr><th scope="row">Other requests</th><td>@Limits.ReadPermitsPerMinute per minute per IP address</td></tr>
+            <tr><th scope="row">Result retention</th><td>
+                A scan id can be polled for @Minutes(Limits.ResultRetention) after the scan finishes. The result itself is stored
+                by input hash, so submitting the same files again returns it straight away. It stays until the scanner is updated, or until
+                it is among the oldest results removed to make room once storage is full
+            </td></tr>
+            </tbody>
+        </table>
+        <p>
+            Going over a rate limit returns <code>429 Too Many Requests</code> with a <code>Retry-After</code> header in seconds.
+            When the queue is full, submissions return <code>503 Service Unavailable</code>.
+        </p>
+    </div>
+</div>
+
+<div class="box">
+    <h2 class="box-title">GET /api/v1/info</h2>
+    <div class="box-body doc">
+        <p>Version information for the API, PakTotal.Sdk and CUE4Parse.</p>
+        <pre>{
+  "api": "1.0.0",
+  "sdk": "1.0.0",
+  "cue4Parse": "1.2.3"
+}</pre>
+    </div>
+</div>
+
+<div class="box">
+    <h2 class="box-title">GET /api/v1/engine-versions</h2>
+    <div class="box-body doc">
+        <p>
+            The engine and game versions a scan can be submitted with. Pass an entry's <code>name</code> as <code>engineVersion</code> when
+            submitting. The response can be cached for an hour.
+        </p>
+        <pre>{
+  "engines": [
+    { "name": "GAME_UE5_8", "display": "UE5.8", "engine": null }
+  ],
+  "games": [
+    { "name": "GAME_Subnautica2", "display": "Subnautica2", "engine": "GAME_UE5_6" }
+  ]
+}</pre>
+    </div>
+</div>
+
+<div class="box">
+    <h2 class="box-title">POST /api/v1/scans</h2>
+    <div class="box-body doc">
+        <p>Submits a mod for scanning. The body is <code>multipart/form-data</code> and must have a <code>Content-Length</code>.</p>
+        <table class="doc-table">
+            <thead>
+            <tr><th scope="col">Field</th><th scope="col">Required</th><th scope="col">Description</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><code>archive</code></td>
+                <td>Yes</td>
+                <td>The mod files: a <code>.pak</code>, an IoStore <code>.utoc</code> + <code>.ucas</code> + <code>.pak</code> set, or one
+                    <code>.zip</code> containing them. Repeat the field for each file, up to 16.</td>
+            </tr>
+            <tr>
+                <td><code>global</code></td>
+                <td>For IoStore</td>
+                <td>The game's <code>global.utoc</code> and <code>global.ucas</code>, one field each.</td>
+            </tr>
+            <tr>
+                <td><code>mappings</code></td>
+                <td>No</td>
+                <td>One <code>.usmap</code>, <code>.jmap</code> or <code>.jmap.gz</code> file. Needed when the game cooks unversioned
+                    assets (most UE5 games); without it those assets fail to load and the scan comes back Unprocessable.</td>
+            </tr>
+            <tr>
+                <td><code>engineVersion</code></td>
+                <td>Yes</td>
+                <td>A <code>name</code> from <code>/api/v1/engine-versions</code>, e.g. <code>GAME_UE5_8</code>.</td>
+            </tr>
+            <tr>
+                <td><code>aesKey</code></td>
+                <td>No</td>
+                <td>The AES key for encrypted archives: 64 hex characters, with or without a <code>0x</code> prefix.</td>
+            </tr>
+            </tbody>
+        </table>
+        <p>
+            Returns <code>202 Accepted</code> with a <code>Location</code> header pointing at the scan. A bad upload returns
+            <code>400</code>, a missing <code>Content-Length</code> returns <code>411</code> and an upload over the size limit returns
+            <code>413</code>.
+        </p>
+        <pre>{ "id": "3f2c9d0b7a6e4c1d8b5a2e9f0c7d6b1a", "status": "queued" }</pre>
+        <p>
+            Results are reused. The server hashes every uploaded file together with the engine version and AES key. If the same set was
+            scanned before by the current version of the scanner, the earlier result is returned straight away with <code>status</code>
+            <code>done</code> and <code>cached</code> set to true. If the same set is already being scanned, you get that scan's id.
+            Changing any file, the engine version or the AES key, or any change to the scanner's modules, gives a fresh scan. For a
+            <code>.zip</code>, the files inside it are hashed, so the same mod gives the same result zipped or not.
+        </p>
+    </div>
+</div>
+
+<div class="box">
+    <h2 class="box-title">GET /api/v1/scans/{id}</h2>
+    <div class="box-body doc">
+        <p>
+            The status of a scan, and its result once it is done. Poll every few seconds until <code>status</code> is <code>done</code> or
+            <code>failed</code>. Unknown or expired ids return <code>404</code>.
+        </p>
+        <table class="doc-table">
+            <thead>
+            <tr><th scope="col">Field</th><th scope="col">Description</th></tr>
+            </thead>
+            <tbody>
+            <tr><td><code>status</code></td><td><code>queued</code>, <code>running</code>, <code>done</code> or <code>failed</code></td></tr>
+            <tr><td><code>position</code></td><td>Place in the queue while <code>queued</code>, otherwise null</td></tr>
+            <tr><td><code>verdict</code></td><td>The overall result when <code>done</code>; see the values below</td></tr>
+            <tr><td><code>severity</code></td><td>The overall severity when something was detected, otherwise null</td></tr>
+            <tr><td><code>incomplete</code></td><td>True when some content could not be fully analysed</td></tr>
+            <tr><td><code>error</code></td><td>Why the scan failed when <code>failed</code></td></tr>
+            <tr><td><code>hash</code></td><td>SHA-256 of the scan's inputs, the key results are reused by</td></tr>
+            <tr><td><code>files</code></td><td>Each scanned file with its <code>name</code>, <code>role</code> (<code>archive</code>,
+                <code>global</code> or <code>mappings</code>), <code>size</code> in bytes and <code>sha256</code>. For a <code>.zip</code>
+                these are the files inside it.</td></tr>
+            <tr><td><code>cached</code></td><td>True when this result was reused from an earlier scan of the same inputs</td></tr>
+            <tr><td><code>scannedAt</code></td><td>When the result was produced (ISO 8601, UTC) once <code>done</code></td></tr>
+            <tr><td><code>modules</code></td><td>One entry per module, each with its own <code>verdict</code>, <code>severity</code>,
+                <code>incomplete</code> flag and the <code>assets</code> it reported on. Private modules do not provide a <code>reason</code>.</td></tr>
+            </tbody>
+        </table>
+        <pre>{
+  "id": "3f2c9d0b7a6e4c1d8b5a2e9f0c7d6b1a",
+  "status": "done",
+  "position": null,
+  "verdict": "suspicious",
+  "severity": "medium",
+  "incomplete": false,
+  "error": null,
+  "modules": [
+    {
+      "name": "Bear",
+      "isPrivate": false,
+      "verdict": "suspicious",
+      "severity": "medium",
+      "incomplete": false,
+      "assets": [
+        {
+          "path": "/Game/Mods/ExampleMod/BP_Example",
+          "verdict": "suspicious",
+          "severity": "medium",
+          "reasons": [
+            {
+              "text": "Example reason text.",
+              "severity": "medium"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hash": "9b1f0e5c2d7a4e8b6c3f1a0d9e8b7c6a5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c",
+  "files": [
+    {
+      "name": "ExampleMod.pak",
+      "role": "archive",
+      "size": 52480,
+      "sha256": "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+    }
+  ],
+  "cached": false,
+  "scannedAt": "2026-10-19T12:00:00+00:00"
+}</pre>
+
+        <h2>Verdicts</h2>
+        <table class="doc-table">
+            <tbody>
+            <tr><th scope="row"><code>undetected</code></th><td>Nothing was found</td></tr>
+            <tr><th scope="row"><code>suspicious</code></th><td>Something was found that may be harmful</td></tr>
+            <tr><th scope="row"><code>malicious</code></th><td>Something was found that is very likely harmful</td></tr>
+            <tr><th scope="row"><code>unprocessable</code></th><td>Unable to process file; see the <a href="faq">FAQ</a></td></tr>
+            </tbody>
+        </table>
+        <p>Severity is one of <code>none</code>, <code>unknown</code>, <code>low</code>, <code>medium</code> or <code>high</code>.</p>
+    </div>
+
+    <p class="disclaimer">
+        PakTotal contains no uptime guarantee. The API may change or rate-limit you. Don't try to get around the limits.
+        Sites that show PakTotal results must not present "Undetected" as "safe" and should credit PakTotal.
+    </p>
+</div>
+
+@code {
+    private PakTotalOptions Limits => Options.Value;
+
+    private static string Minutes(TimeSpan span) => span.TotalMinutes == 1 ? "1 minute" : $"{span.TotalMinutes:0} minutes";
+}

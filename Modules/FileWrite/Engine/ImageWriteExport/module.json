@@ -1,0 +1,31 @@
+{
+    "id": "image-write-export",
+    "name": "Image Write Export To Disk",
+    "codeName": "Heron",
+    "version": "1.0.0",
+    "sdkVersion": "1.0.0",
+    "visibility": "public",
+    "enabled": true,
+    "assembly": "PakTotal.Modules.FileWrite.dll",
+    "entryType": "PakTotal.Modules.FileWrite.FileWriteModule",
+    "requires": [
+        "blueprints"
+    ],
+    "appliesTo": {
+        "requiresAnyScriptPackage": [
+            "/Script/ImageWriteQueue"
+        ]
+    },
+    "settings": {
+        "targets": [
+            {
+                "owner": "ImageWriteBlueprintLibrary",
+                "function": "ExportToDisk",
+                "displayName": "Export to Disk",
+                "path": {
+                    "parameter": 1
+                }
+            }
+        ]
+    }
+}
